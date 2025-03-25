@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,8 +15,7 @@ import java.util.TreeMap;
 public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
-    private List<Contact> contacts;
-    private Map<Character, Integer> sectionPositions;
+    private List<Object> combinedList;  // Stores both headers and contacts
     private OnContactClickListener listener;
 
     public interface OnContactClickListener {
@@ -25,25 +25,25 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public ContactAdapter(List<Contact> contacts, OnContactClickListener listener) {
         this.listener = listener;
-        this.contacts = contacts;
-        sectionPositions = new TreeMap<>();
-        groupContactsByInitial();
+        combinedList = new ArrayList<>();
+        groupContactsWithHeaders(contacts);
     }
 
-    private void groupContactsByInitial() {
+    private void groupContactsWithHeaders(List<Contact> contacts) {
         char lastInitial = 0;
-        for (int i = 0; i < contacts.size(); i++) {
-            char initial = contacts.get(i).getName().charAt(0);
+        for (Contact contact : contacts) {
+            char initial = Character.toUpperCase(contact.getName().charAt(0));
             if (initial != lastInitial) {
-                sectionPositions.put(initial, i + sectionPositions.size());
+                combinedList.add(String.valueOf(initial));  // Add header
                 lastInitial = initial;
             }
+            combinedList.add(contact);  // Add contact
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return sectionPositions.containsValue(position) ? TYPE_HEADER : TYPE_ITEM;
+        return combinedList.get(position) instanceof String ? TYPE_HEADER : TYPE_ITEM;
     }
 
     @NonNull
@@ -61,17 +61,10 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
-            int actualPosition = position - sectionPositions.size();
-            if (actualPosition < 0 || actualPosition >= contacts.size()) return; // Prevent invalid index
-
-            ((HeaderViewHolder) holder).headerText.setText(
-                    String.valueOf(contacts.get(actualPosition).getName().charAt(0))
-            );
+            String headerText = (String) combinedList.get(position);
+            ((HeaderViewHolder) holder).headerText.setText(headerText);
         } else {
-            int actualPosition = position - sectionPositions.size();
-            if (actualPosition < 0 || actualPosition >= contacts.size()) return; // Prevent invalid index
-
-            Contact contact = contacts.get(actualPosition);
+            Contact contact = (Contact) combinedList.get(position);
             ContactViewHolder contactHolder = (ContactViewHolder) holder;
             contactHolder.name.setText(contact.getName());
             contactHolder.phone.setText(contact.getPhoneNumber().isEmpty() ? "No phone" : contact.getPhoneNumber());
@@ -82,7 +75,7 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return contacts.size() + sectionPositions.size();
+        return combinedList.size();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -104,4 +97,3 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 }
-
