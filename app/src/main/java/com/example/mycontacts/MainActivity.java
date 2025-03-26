@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ContactAdapter.OnContactClickListener {
@@ -24,27 +23,20 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        contactList = getSampleContacts(); // Load static contacts
+        // Load contacts from ContactData instead of creating new ones
+        contactList = ContactData.getContacts();
 
         adapter = new ContactAdapter(contactList, this);
         recyclerView.setAdapter(adapter);
     }
 
-    private List<Contact> getSampleContacts() {
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact(1, "Alice", "mobile", "123456789", "work", "alice@example.com"));
-        contacts.add(new Contact(2, "Bob", "mobile", "", "home", "bob@example.com"));
-        contacts.add(new Contact(3, "Charlie", "home", "987654321", "", ""));
-        contacts.add(new Contact(4, "David", "work", "555555555", "work", "david@example.com"));
-        contacts.add(new Contact(5, "Emma", "mobile", "666666666", "", ""));
-        contacts.add(new Contact(6, "effa", "mobile", "666666666", "", ""));
-        contacts.add(new Contact(7, "gemma", "mobile", "666666666", "", ""));
-        return contacts;
-    }
-
     @Override
     public void onCallClick(String phoneNumber) {
-
+        if (!phoneNumber.isEmpty()) {
+            Toast.makeText(this, "Calling: " + phoneNumber, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No phone number", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -52,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         Contact selectedContact = getContactById(contactId);
         if (selectedContact != null) {
             Intent intent = new Intent(this, ContactDetailsActivity.class);
-            intent.putExtra("CONTACT", selectedContact);  // Pass the entire object
+            intent.putExtra("CONTACT", selectedContact);  // Pass only the ID, not the whole object
             startActivity(intent);
         }
     }
@@ -65,4 +57,5 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         }
         return null; // If contact is not found
     }
+
 }

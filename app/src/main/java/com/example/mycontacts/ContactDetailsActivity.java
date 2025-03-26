@@ -1,15 +1,14 @@
 package com.example.mycontacts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ContactDetailsActivity extends AppCompatActivity {
-    private TextView contactName, phoneType, phoneNumber, emailType, emailAddress;
-    private Button buttonCall, buttonMessage, buttonMail;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +18,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
         if (contact != null) {
             // Initialize Views
+
             TextView contactName = findViewById(R.id.contact_name);
             TextView phoneType = findViewById(R.id.phone_type);
             TextView phoneNumber = findViewById(R.id.phone_number);
@@ -27,7 +27,22 @@ public class ContactDetailsActivity extends AppCompatActivity {
             Button buttonCall = findViewById(R.id.button_call);
             Button buttonMessage = findViewById(R.id.button_message);
             Button buttonMail = findViewById(R.id.button_mail);
-
+            ImageButton imageButton = findViewById(R.id.backButton);
+            imageButton.setOnClickListener(v ->
+                    {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+            );
+            ImageButton settings = findViewById(R.id.settings);
+            settings.setOnClickListener(v ->
+                    {
+                        Intent intent = new Intent(getApplicationContext(), ContactRedactActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+            );
             // Set Contact Details
             contactName.setText(contact.getName());
             phoneType.setText("Phone Type: " + contact.getPhoneType());
@@ -40,10 +55,5 @@ public class ContactDetailsActivity extends AppCompatActivity {
             buttonMessage.setEnabled(!contact.getPhoneNumber().isEmpty());
             buttonMail.setEnabled(!contact.getEmail().isEmpty());
         }
-    }
-
-    private Contact getContactById(int contactId) {
-        // Retrieve the contact from the MainActivity list
-        return ((MainActivity) getApplicationContext()).getContactById(contactId);
     }
 }
