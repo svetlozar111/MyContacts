@@ -9,13 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
-    private List<Object> combinedList;  // Stores both headers and contacts
+    private List<Object> combinedList;
     private OnContactClickListener listener;
 
     public interface OnContactClickListener {
@@ -34,10 +32,10 @@ public class ContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         for (Contact contact : contacts) {
             char initial = Character.toUpperCase(contact.getName().charAt(0));
             if (initial != lastInitial) {
-                combinedList.add(String.valueOf(initial));  // Add header
+                combinedList.add(String.valueOf(initial));
                 lastInitial = initial;
             }
-            combinedList.add(contact);  // Add contact
+            combinedList.add(contact);
         }
     }
 

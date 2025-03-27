@@ -13,7 +13,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ContactAdapter.OnContactClickListener {
     private RecyclerView recyclerView;
     private ContactAdapter adapter;
-    private List<Contact> contactList; // Store contacts here
+    private List<Contact> contactList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load contacts from ContactData instead of creating new ones
         contactList = ContactData.getContacts();
 
         adapter = new ContactAdapter(contactList, this);
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         Contact selectedContact = getContactById(contactId);
         if (selectedContact != null) {
             Intent intent = new Intent(this, ContactDetailsActivity.class);
-            intent.putExtra("CONTACT", selectedContact);  // Pass only the ID, not the whole object
+            intent.putExtra("CONTACT", selectedContact);
             startActivity(intent);
         }
     }
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
                 return contact;
             }
         }
-        return null; // If contact is not found
+        return null;
     }
 
 }

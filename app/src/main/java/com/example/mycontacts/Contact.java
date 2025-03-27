@@ -19,19 +19,51 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
-    // Getters
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getPhoneType() { return phoneType; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getEmailType() { return emailType; }
-    public String getEmail() { return email; }
+    public int getId() {
+        return id;
+    }
 
-    // Setters
-    public void setId(int id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setPhoneType(String phoneType) { this.phoneType = phoneType; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-    public void setEmailType(String emailType) { this.emailType = emailType; }
-    public void setEmail(String email) { this.email = email; }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(String phoneType) {
+        this.phoneType = phoneType;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmailType() {
+        return emailType;
+    }
+
+    public void setEmailType(String emailType) {
+        this.emailType = emailType;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
