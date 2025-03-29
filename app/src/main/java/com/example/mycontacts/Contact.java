@@ -9,14 +9,16 @@ public class Contact implements Serializable {
     private String phoneNumber;
     private String emailType;
     private String email;
+    private String imageUrl;
 
-    public Contact(int id, String name, String phoneType, String phoneNumber, String emailType, String email) {
+    public Contact(int id, String name, String phoneType, String phoneNumber, String emailType, String email, String imageUrl) {
         this.id = id;
         this.name = name;
         this.phoneType = phoneType;
         this.phoneNumber = phoneNumber;
         this.emailType = emailType;
         this.email = email;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -65,5 +67,13 @@ public class Contact implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
