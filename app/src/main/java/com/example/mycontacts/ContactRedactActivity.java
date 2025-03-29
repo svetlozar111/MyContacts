@@ -70,6 +70,31 @@ public class ContactRedactActivity extends AppCompatActivity {
         spinnerEmailType.setAdapter(emailAdapter);
 
         contact = (Contact) getIntent().getSerializableExtra("CONTACT");
+        editName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String text = editName.getText().toString();
+                String capitalizedText = capitalizeFirstWordOnly(text);
+                editName.setText(capitalizedText);
+                editName.setSelection(capitalizedText.length());
+            }
+        });
+        editEmail.setFilters(new InputFilter[]{emailFilter, new InputFilter.LengthFilter(50)});
+
+        editEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!Patterns.EMAIL_ADDRESS.matcher(s).matches() && s.length() > 0) {
+                    editEmail.setError("Invalid email format");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
 
         if (contact != null) {
             editName.setText(contact.getName());
@@ -138,6 +163,33 @@ public class ContactRedactActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
     }
+    private final InputFilter emailFilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@.";
+            for (int i = start; i < end; i++) {
+                if (!allowedCharacters.contains(String.valueOf(source.charAt(i)))) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
+    private String capitalizeFirstWordOnly(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        String[] words = input.trim().split("\\s+");
+        if (words.length > 0) {
+            words[0] = words[0].substring(0, 1).toUpperCase() + words[0].substring(1).toLowerCase();
+        }
+        StringBuilder result = new StringBuilder(words[0]);
+        for (int i = 1; i < words.length; i++) {
+            result.append(" ").append(words[i].toLowerCase());
+        }
+        return result.toString();
+    }
 
     private void showImageEditDialog() {
         String[] options = {"Enter URL", "Select from Gallery"};
@@ -180,6 +232,12 @@ public class ContactRedactActivity extends AppCompatActivity {
 
     private void saveContact() {
         if (contact != null) {
+            String emailInput = editEmail.getText().toString().trim();
+            if (!emailInput.isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
+                editEmail.setError("Invalid email format");
+                Toast.makeText(this, "Please enter a valid email!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             contact.setName(editName.getText().toString());
             contact.setPhoneNumber(editPhone.getText().toString());
             contact.setEmail(editEmail.getText().toString());
@@ -212,4 +270,27 @@ public class ContactRedactActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v != null && (v instanceof EditText || v instanceof TextInputEditText)) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    v.clearFocus();
+                    hideKeyboard(v);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 }
